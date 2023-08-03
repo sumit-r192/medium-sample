@@ -68,6 +68,28 @@ module Api
         render json: recommended_posts, status: :ok
       end
 
+      def more_posts_by_similar_author
+        @post = Post.find(params[:id])
+        similar_author_id = @post.author_id
+
+        # Fetch more posts by authors similar to the current post's author
+        more_posts = Post.where(author_id: similar_author_id).where.not(id: @post.id).limit(10)
+
+        render json: more_posts, status: :ok
+      end
+
+      def save_for_later
+        @post = Post.find(params[:id])
+        current_user.saved_for_later << @post
+        render json: @post, status: :ok
+      end
+
+      def unsave
+        @post = Post.find(params[:id])
+        current_user.saved_for_later.delete(@post)
+        render json: @post, status: :ok
+      end
+
       private
 
       def set_post

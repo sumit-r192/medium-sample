@@ -13,4 +13,7 @@ class User < ApplicationRecord
 
   has_many :followed_relationships, foreign_key: :follower_id, class_name: 'Follow'
   has_many :followed_users, through: :followed_relationships, source: :followed
+
+  has_many :saved_posts
+  has_many :saved_for_later, through: :saved_posts, source: :post
 end

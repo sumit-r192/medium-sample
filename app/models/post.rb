@@ -3,6 +3,8 @@ class Post < ApplicationRecord
   has_many :likes, as: :likeable, dependent: :destroy
 
   after_save :calculate_reading_time
+  has_many :saved_posts
+  has_many :saved_by_users, through: :saved_posts, source: :user
 
   enum status: {
     draft: 0,
