@@ -7,8 +7,18 @@ Rails.application.routes.draw do
       }
 
       resource :profile, only: [:show, :update], controller: 'profiles'
-      resources :posts, except: [:new, :edit]
-      resources :comments, only: [:new, :edit]
+      resources :posts, except: [:new, :edit] do
+        member do
+          post 'like'
+          delete 'unlike'
+        end
+        resources :comments, only: [:new, :edit] do
+          member do
+            post 'like'
+            delete 'unlike'
+          end
+        end
+      end
     end
   end
 end

@@ -35,6 +35,16 @@ module Api
         head :no_content
       end
 
+      def like
+        @post.likes.create(user: current_user)
+        render json: @post, status: :ok
+      end
+
+      def unlike
+        @post.likes.where(user_id: current_user.id).destroy_all
+        render json: @post, status: :ok
+      end
+
       private
 
       def set_post
