@@ -45,6 +45,29 @@ module Api
         render json: @post, status: :ok
       end
 
+      def top_posts
+        top_posts = Post.joins(:likes, :comments)
+                       .select('posts.*, COUNT(DISTINCT likes.id) AS total_likes, COUNT(DISTINCT comments.id) AS total_comments')
+                       .group('posts.id')
+                       .order('total_likes DESC, total_comments DESC')
+                       .limit(10)
+
+        render json: top_posts, status: :ok
+      end
+
+      def recommended_posts
+        user_following_ids = current_user.followed_users.pluck(:id)
+
+        recommended_posts = Post.joins(:likes)
+                                .where(likes: { user_id: user_following_ids })
+                                .select('posts.*, COUNT(DISTINCT likes.id) AS total_likes')
+                                .group('posts.id')
+                                .order('total_likes DESC')
+                                .limit(10)
+
+        render json: recommended_posts, status: :ok
+      end
+
       private
 
       def set_post
@@ -52,7 +75,7 @@ module Api
       end
 
       def post_params
-        params.require(:post).permit(:title, :content)
+        params.require(:post).permit(:title, :content, :status)
       end
     end
   end

@@ -12,11 +12,24 @@ Rails.application.routes.draw do
           post 'like'
           delete 'unlike'
         end
+
+        collection do
+          get 'top_posts'
+          get 'recommended_posts'
+        end
+
         resources :comments, only: [:new, :edit] do
           member do
             post 'like'
             delete 'unlike'
           end
+        end
+      end
+
+      resources :users, only: [:show] do
+        member do
+          post 'follow'
+          delete 'unfollow'
         end
       end
     end

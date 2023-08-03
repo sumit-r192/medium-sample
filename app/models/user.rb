@@ -5,4 +5,12 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_one :profile
+  has_many :posts
+  has_many :comments
+
+  has_many :follower_relationships, foreign_key: :followed_id, class_name: 'Follow'
+  has_many :followers, through: :follower_relationships, source: :follower
+
+  has_many :followed_relationships, foreign_key: :follower_id, class_name: 'Follow'
+  has_many :followed_users, through: :followed_relationships, source: :followed
 end
