@@ -2,11 +2,10 @@ class Post < ApplicationRecord
   belongs_to :user
   has_many :comments, dependent: :destroy
   has_many :likes, as: :likeable, dependent: :destroy
-  
-
-  before_save :calculate_reading_time
+  has_many :post_payments
   has_many :saved_posts
   has_many :saved_by_users, through: :saved_posts, source: :user
+  before_save :calculate_reading_time
 
   enum status: {
     draft: 0,

@@ -43,6 +43,15 @@ Rails.application.routes.draw do
           delete 'unfollow'
         end
       end
+
+      resources :subscriptions, only: [:index] do
+        member do
+          post 'subscribe', to: 'subscriptions#create'
+        end
+        collection do
+          get 'my_subscribtions', to: 'subscriptions#my_subscribtions'
+        end
+      end
     end
   end
 end
