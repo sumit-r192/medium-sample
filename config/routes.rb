@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
       post 'auth/login', to: 'authentication#login'
       delete 'auth/logout', to: 'authentication#logout'
+      get 'search', to: 'posts#search'
 
       resource :profile, only: [:show, :update], controller: 'profiles'
       resources :posts, except: [:new, :edit] do
@@ -25,11 +26,13 @@ Rails.application.routes.draw do
           get 'recommended_posts'
         end
 
-        resources :comments, only: [:new, :edit] do
-          member do
-            post 'like'
-            delete 'unlike'
-          end
+        resources :comments, only: [:create]
+      end
+
+      resources :comments, except: [:new, :edit, :create] do
+        member do
+          post 'like'
+          delete 'unlike'
         end
       end
 

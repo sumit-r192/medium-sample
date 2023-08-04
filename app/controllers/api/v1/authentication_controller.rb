@@ -15,7 +15,7 @@ module Api
       end
 
       def logout
-        sign_out(current_user)
+        sign_out(@current_user)
         render json: { message: 'Logged out successfully' }
       end
     end

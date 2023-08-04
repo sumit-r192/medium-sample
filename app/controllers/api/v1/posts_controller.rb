@@ -9,8 +9,22 @@ module Api
         render json: @posts
       end
 
+      # Query searched from google
       def index
-        @posts = Post.all
+          if params[:sort_by] == 'likes'
+          @posts = Post.left_joins(:likes)
+                       .group(:id)
+                       .select('posts.*, COUNT(likes.id) AS likes_count')
+                       .order('likes_count DESC')
+        elsif params[:sort_by] == 'comments'
+          @posts = Post.left_joins(:comments)
+                       .group(:id)
+                       .select('posts.*, COUNT(comments.id) AS comments_count')
+                       .order('comments_count DESC')
+        else
+          @posts = Post.all
+        end
+
         render json: @posts
       end
 
@@ -94,6 +108,16 @@ module Api
       def unsave
         @current_user.saved_for_later.delete(@post)
         render json: { count: @current_user.saved_for_later.count }, status: :ok
+      end
+
+      def search
+        query = params[:query]
+        if query.present?
+          posts = Post.where('title ILIKE ? OR content ILIKE ?', "%#{query}%", "%#{query}%")
+          render json: posts
+        else
+          render json: { error: 'Search query parameter "query" is required.' }, status: :bad_request
+        end
       end
 
       private

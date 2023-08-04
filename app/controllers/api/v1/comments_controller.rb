@@ -2,8 +2,9 @@
 module Api
   module V1
     class CommentsController < ApplicationController
-      before_action :authenticate_user!
-      before_action :set_post
+      before_action :authenticate_user
+      before_action :set_post, only: [:index, :create]
+      before_action :set_comment, except: [:index, :create]
 
       def index
         @comments = @post.comments
@@ -11,13 +12,12 @@ module Api
       end
 
       def show
-        @comment = @post.comments.find(params[:id])
         render json: @comment
       end
 
       def create
         @comment = @post.comments.build(comment_params)
-        @comment.user = current_user
+        @comment.user = @current_user
         if @comment.save
           render json: @comment, status: :created
         else
@@ -26,7 +26,6 @@ module Api
       end
 
       def update
-        @comment = @post.comments.find(params[:id])
         if @comment.update(comment_params)
           render json: @comment
         else
@@ -35,29 +34,32 @@ module Api
       end
 
       def destroy
-        @comment = @post.comments.find(params[:id])
         @comment.destroy
         head :no_content
       end
 
       def like
-        @comment.likes.create(user: current_user)
+        @comment.likes.create(user: @current_user)
         render json: @comment, status: :ok
       end
 
       def unlike
-        @comment.likes.where(user_id: current_user.id).destroy_all
+        @comment.likes.where(user_id: @current_user.id).destroy_all
         render json: @comment, status: :ok
       end
 
       private
+
+      def set_comment
+        @comment = Comment.find(params[:id])      
+      end
 
       def set_post
         @post = Post.find(params[:post_id])
       end
 
       def comment_params
-        params.require(:comment).permit(:content)
+        params.permit(:content)
       end
     end
   end

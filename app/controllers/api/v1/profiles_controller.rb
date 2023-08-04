@@ -1,16 +1,16 @@
 module Api
   module V1
     class ProfilesController < ApplicationController
-      before_action :authenticate_user!
+      before_action :authenticate_user
       before_action :set_profile
 
       def show; end
 
       def update
-        if current_user.update(profile_params)
-          render_resource(current_user)
+        if @current_user.update(profile_params)
+          render_resource(@current_user)
         else
-          render json: current_user.errors, status: :unprocessable_entity
+          render json: @current_user.errors, status: :unprocessable_entity
         end
       end
 
@@ -21,7 +21,7 @@ module Api
       end
 
       def set_profile
-        @profile = current_user.profile
+        @profile = @current_user.profile
       end
     end
   end
