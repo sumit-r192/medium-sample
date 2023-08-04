@@ -14,4 +14,10 @@ class User < ApplicationRecord
 
   has_many :saved_posts
   has_many :saved_for_later, through: :saved_posts, source: :post
+
+  after_create :add_profile
+
+  def add_profile
+    build_profile.save
+  end
 end

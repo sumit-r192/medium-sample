@@ -7,17 +7,17 @@ module Api
       def show; end
 
       def update
-        if @current_user.update(profile_params)
-          render_resource(@current_user)
+        if @profile.update(profile_params)
+          render json: { profile: @profile, img: url_for(@profile.avatar) }
         else
-          render json: @current_user.errors, status: :unprocessable_entity
+          render json: @profile.errors, status: :unprocessable_entity
         end
       end
 
       private
 
       def profile_params
-        params.require(:user).permit(:name, :email, :avatar, :bio) # Add other profile fields as needed
+        params.permit(:name, :email, :avatar, :bio, :avatar)
       end
 
       def set_profile
