@@ -16,12 +16,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_04_064139) do
 
   create_table "comments", force: :cascade do |t|
     t.text "content"
-    t.bigint "user_id", null: false
-    t.bigint "post_id", null: false
+    t.integer "post_id", null: false
+    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["post_id"], name: "index_comments_on_post_id"
-    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "follows", force: :cascade do |t|
@@ -51,6 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_04_064139) do
     t.string "title"
     t.string "topic"
     t.text "content"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "reading_time"
@@ -58,6 +57,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_04_064139) do
   end
 
   create_table "profiles", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "gender"
+    t.string "age"
+    t.string "address"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -83,8 +88,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_04_064139) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "comments", "posts"
-  add_foreign_key "comments", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "saved_posts", "posts"
   add_foreign_key "saved_posts", "users"

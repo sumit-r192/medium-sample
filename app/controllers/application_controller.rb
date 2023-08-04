@@ -1,7 +1,5 @@
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::API
-  # protect_from_forgery with: :null_session
-
   include Devise::Controllers::Helpers
   include ActionController::MimeResponds
   respond_to :json
@@ -14,6 +12,20 @@ class ApplicationController < ActionController::API
     else
       render json: resource.errors, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def authenticate_user
+    token = request.headers['Authorization']
+    if token
+      decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base, true, algorithm: 'HS256')
+      @current_user = User.find(decoded_token[0]['user_id'])
+    else
+      render json: { error: 'Token is missing or invalid' }, status: :unauthorized
+    end
+  rescue JWT::DecodeError
+    render json: { error: 'Token is missing or invalid' }, status: :unauthorized
   end
 
   protected

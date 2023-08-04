@@ -20,6 +20,7 @@ Rails.application.routes.draw do
         end
 
         collection do
+          get 'author_posts'
           get 'top_posts'
           get 'recommended_posts'
         end

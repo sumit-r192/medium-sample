@@ -1,8 +1,13 @@
 module Api
   module V1
     class PostsController < ApplicationController
-      before_action :authenticate_user!, except: [:index, :show]
-      before_action :set_post, only: [:show, :update, :destroy]
+      before_action :authenticate_user, except: [:index, :show]
+      before_action :set_post, only: [:show, :update, :destroy, :like, :unlike, :more_posts_by_similar_author, :save_for_later, :unsave]
+
+      def author_posts
+        @posts = @@current_user.posts
+        render json: @posts
+      end
 
       def index
         @posts = Post.all
@@ -14,7 +19,7 @@ module Api
       end
 
       def create
-        @post = current_user.posts.build(post_params)
+        @post = @current_user.posts.build(post_params)
         if @post.save
           render json: @post, status: :created
         else
@@ -36,15 +41,16 @@ module Api
       end
 
       def like
-        @post.likes.create(user: current_user)
-        render json: @post, status: :ok
+        @post.likes.where(user: @current_user).first_or_create
+        render json: { count: @post.likes.count }, status: :ok
       end
 
       def unlike
-        @post.likes.where(user_id: current_user.id).destroy_all
-        render json: @post, status: :ok
+        @post.likes.where(user_id: @current_user.id).destroy_all
+        render json: { count: @post.likes.count }, status: :ok
       end
 
+      # Query fetched from the google
       def top_posts
         top_posts = Post.joins(:likes, :comments)
                        .select('posts.*, COUNT(DISTINCT likes.id) AS total_likes, COUNT(DISTINCT comments.id) AS total_comments')
@@ -56,8 +62,9 @@ module Api
       end
 
       def recommended_posts
-        user_following_ids = current_user.followed_users.pluck(:id)
+        user_following_ids = @current_user.followed_users.pluck(:id)
 
+        # Query fetched from the google
         recommended_posts = Post.joins(:likes)
                                 .where(likes: { user_id: user_following_ids })
                                 .select('posts.*, COUNT(DISTINCT likes.id) AS total_likes')
@@ -69,7 +76,6 @@ module Api
       end
 
       def more_posts_by_similar_author
-        @post = Post.find(params[:id])
         similar_author_id = @post.author_id
 
         # Fetch more posts by authors similar to the current post's author
@@ -79,15 +85,15 @@ module Api
       end
 
       def save_for_later
-        @post = Post.find(params[:id])
-        current_user.saved_for_later << @post
-        render json: @post, status: :ok
+        if @current_user.saved_for_later.include?(@post)
+          @current_user.saved_for_later << @post
+        end
+        render json: { count: @current_user.saved_for_later.count }, status: :ok
       end
 
       def unsave
-        @post = Post.find(params[:id])
-        current_user.saved_for_later.delete(@post)
-        render json: @post, status: :ok
+        @current_user.saved_for_later.delete(@post)
+        render json: { count: @current_user.saved_for_later.count }, status: :ok
       end
 
       private
