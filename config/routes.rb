@@ -6,6 +6,9 @@ Rails.application.routes.draw do
         sessions: 'api/v1/sessions'
       }
 
+      post 'auth/login', to: 'authentication#login'
+      delete 'auth/logout', to: 'authentication#logout'
+
       resource :profile, only: [:show, :update], controller: 'profiles'
       resources :posts, except: [:new, :edit] do
         member do
