@@ -4,7 +4,7 @@ class Post < ApplicationRecord
   has_many :likes, as: :likeable, dependent: :destroy
   
 
-  after_save :calculate_reading_time
+  before_save :calculate_reading_time
   has_many :saved_posts
   has_many :saved_by_users, through: :saved_posts, source: :user
 
@@ -21,8 +21,10 @@ class Post < ApplicationRecord
   private
 
   def calculate_reading_time
-    words_per_minute = 200 # Adjust this value based on your estimation of reading speed
+    words_per_minute = 200 # Adjust this value based on your estimation
     word_count = content.split.size
-    self.reading_time = (word_count / words_per_minute).ceil
+    minutes = (word_count / words_per_minute).ceil
+    minutes = 1 if minutes.zero? # At least 1 minute
+    self.reading_time = minutes
   end
 end

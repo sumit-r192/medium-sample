@@ -2,7 +2,7 @@ module Api
   module V1
     class PostsController < ApplicationController
       before_action :authenticate_user, except: [:index, :show]
-      before_action :set_post, only: [:show, :update, :destroy, :like, :unlike, :more_posts_by_similar_author, :save_for_later, :unsave]
+      before_action :set_post, only: [:show, :update, :destroy, :like, :unlike, :more_posts_by_similar_author, :save_for_later, :unsave, :stats]
 
       def author_posts
         @posts = @@current_user.posts
@@ -22,7 +22,7 @@ module Api
                        .select('posts.*, COUNT(comments.id) AS comments_count')
                        .order('comments_count DESC')
         else
-          @posts = Post.all
+          @posts = Post.all.order('created_at DESC')
         end
 
         render json: @posts
@@ -120,6 +120,11 @@ module Api
         end
       end
 
+      def stats
+        data = { likes_count: @post.likes.count, coments_count: @post.comments.count }
+        render json: data, status: :ok
+      end
+
       private
 
       def set_post
@@ -127,7 +132,7 @@ module Api
       end
 
       def post_params
-        params.require(:post).permit(:title, :content, :status)
+        params.permit(:title, :content, :status)
       end
     end
   end

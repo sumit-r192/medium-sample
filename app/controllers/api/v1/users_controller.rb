@@ -5,7 +5,11 @@ module Api
       before_action :set_user, only: [:show, :follow, :unfollow]
 
       def show
-        render json: @user
+        render json: { user: @user, stats: stats }
+      end
+
+      def stats
+        { followers: @user.followers.count, followings: @user.followings.count }
       end
 
       def follow

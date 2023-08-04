@@ -18,6 +18,7 @@ Rails.application.routes.draw do
           post 'save_for_later'
           delete 'unsave'
           get 'more_posts_by_similar_author'
+          get 'stats'
         end
 
         collection do
