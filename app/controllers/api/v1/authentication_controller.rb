@@ -1,7 +1,7 @@
 module Api
   module V1
     class AuthenticationController < ApplicationController
-      before_action :authenticate_user!, only: :logout
+      before_action :authenticate_user, only: :logout
       respond_to :json
 
       def login
