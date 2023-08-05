@@ -24,3 +24,17 @@ class User < ApplicationRecord
     build_profile.save
   end
 end
+
+# Dummy test case
+
+# Kartik Pavan
+
+# Pavan follow Kartik => Follow table => follower_id: :paven_id,  followings_id: :kartik_id
+
+# Pavan => followers => 0
+# Pavan => followings => 1
+
+# Kartik follow Paven => Follow table => follower_id: :kartik_id,  followings_id: :paven_id
+
+# Pavan => followers => 1
+# Pavan => followings => 1
