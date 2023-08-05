@@ -4,14 +4,9 @@ module Api
       before_action :authenticate_user, except: [:index, :show]
       before_action :set_post, only: [:show, :update, :destroy, :like, :unlike, :more_posts_by_similar_author, :save_for_later, :unsave, :stats]
 
-      def author_posts
-        @posts = @@current_user.posts
-        render json: @posts
-      end
-
       # Query searched from google
       def index
-          if params[:sort_by] == 'likes'
+        if params[:sort_by] == 'likes'
           @posts = Post.left_joins(:likes)
                        .group(:id)
                        .select('posts.*, COUNT(likes.id) AS likes_count')
@@ -89,6 +84,7 @@ module Api
         render json: recommended_posts, status: :ok
       end
 
+      # We have created a action for the same in users controller => posts
       def more_posts_by_similar_author
         similar_author_id = @post.author_id
 

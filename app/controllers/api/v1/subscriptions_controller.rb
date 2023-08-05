@@ -20,5 +20,4 @@ class Api::V1::SubscriptionsController < ApplicationController
   def my_subscribtions
     render json: @current_user.subscriptions
   end
-
 end

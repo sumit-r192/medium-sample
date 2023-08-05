@@ -2,7 +2,7 @@ module Api
   module V1
     class UsersController < ApplicationController
       before_action :authenticate_user
-      before_action :set_user, only: [:show, :follow, :unfollow]
+      before_action :set_user, only: [:show, :follow, :unfollow, :posts]
 
       def show
         render json: { user: @user, stats: stats }
@@ -22,6 +22,11 @@ module Api
         follow = @current_user.followings.find_by(follower_id: @user.id)
         follow&.destroy
         render json: { count: @current_user.followings.count }, status: :ok
+      end
+
+      def posts
+        @posts = @user.posts
+        render json: @posts
       end
 
       private

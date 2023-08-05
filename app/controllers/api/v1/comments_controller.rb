@@ -39,7 +39,7 @@ module Api
       end
 
       def like
-        @comment.likes.create(user: @current_user)
+        @comment.likes.where(user: @current_user).first_or_create
         render json: @comment, status: :ok
       end
 

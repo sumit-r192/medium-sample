@@ -22,7 +22,6 @@ Rails.application.routes.draw do
         end
 
         collection do
-          get 'author_posts'
           get 'top_posts'
           get 'recommended_posts'
         end
@@ -41,6 +40,7 @@ Rails.application.routes.draw do
         member do
           post 'follow'
           delete 'unfollow'
+          get 'posts'
         end
       end
 

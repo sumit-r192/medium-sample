@@ -14,6 +14,7 @@ class User < ApplicationRecord
 
   has_many :saved_posts
   has_many :saved_for_later, through: :saved_posts, source: :post
+
   has_many :user_subscriptions
   has_many :subscriptions, through: :user_subscriptions
 

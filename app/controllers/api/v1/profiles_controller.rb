@@ -4,7 +4,9 @@ module Api
       before_action :authenticate_user
       before_action :set_profile
 
-      def show; end
+      def show
+        render json: { profile: @profile, img: url_for(@profile.avatar) }
+      end
 
       def update
         if @profile.update(profile_params)
@@ -17,7 +19,7 @@ module Api
       private
 
       def profile_params
-        params.permit(:name, :email, :avatar, :bio, :avatar)
+        params.permit(:first_name, :last_name, :age, :gender, :avatar, :address)
       end
 
       def set_profile
